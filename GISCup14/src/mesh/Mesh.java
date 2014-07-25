@@ -24,13 +24,19 @@ public class Mesh {
 						System.out.println(f[i]);
 					}
 				}
+
+				// remove duplicates from lines_out
+				// take first and last from lines_out for each line
+
 				List<Point> p = new ArrayList<Point>();
 				for (Point[] points : im.points) {
 					for (Point pt : points) {
 						p.add(pt);
 					}
 				}
+
 				delaunay.DelaunayTriangulation.triangulate(p);
+
 				System.out.printf("Offset is %d, %d\n", im.offset[0],
 						im.offset[1]);
 			} catch (IOException e) {
