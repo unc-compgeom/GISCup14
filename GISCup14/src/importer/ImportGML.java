@@ -10,24 +10,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-public class ImportGML {
-	public static void main(String[] args) {
-		try {
-			ImportedCoordinates im = importGML("src\\td1\\lines_out.txt");
-			System.out.println("Normalized coordinates are:");
-			for (float[] f : im.coordinates) {
-				for (int i = 0; i < f.length; i += 2) {
-					System.out.printf("%16f, %16f\n", f[i], f[i + 1]);
-				}
-			}
-			System.out.printf("Offset is %d, %d", im.offset[0], im.offset[1]);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+import delaunay.Point;
+import delaunay.PointComponent;
 
-	public static ImportedCoordinates importGML(String fileName)
-			throws IOException {
+public class ImportGML {
+
+	public static PointsAndOffset importGML(String fileName) throws IOException {
 		File f = new File(fileName);
 		BufferedReader r = new BufferedReader(new FileReader(f));
 		assert r.ready(); // the reader should be ready
@@ -37,12 +25,12 @@ public class ImportGML {
 		 */
 		int readLimit = 21;
 		/**
-		 * Store each line's coordinates in this String queue.
+		 * Store each line's points in this String queue.
 		 */
 		Queue<String> stringCoordinates;
 		/**
-		 * After completing a line, add that line's coordinates to a new array,
-		 * store all arrays in this list.
+		 * After completing a line, add that line's points to a new array, store
+		 * all arrays in this list.
 		 */
 		List<double[]> doubleCoordinates = new ArrayList<double[]>();
 
@@ -52,7 +40,7 @@ public class ImportGML {
 			// pass <gml:LineString...>
 			while (r.read() != '>')
 				;
-			// pass <gml:coordinates...>
+			// pass <gml:points...>
 			while (r.read() != '>')
 				;
 			stringCoordinates = new LinkedList<String>();
@@ -119,28 +107,23 @@ public class ImportGML {
 				}
 			}
 		}
-		// normalize coordinates
+		// normalize points
 		long dX = (long) (0 - Math.floor(minLatLong[0]));
 		long dY = (long) (0 - Math.floor(minLatLong[1]));
 
 		// create a data structure to return
-		ImportedCoordinates normalizedCoordinates = new ImportedCoordinates();
+		PointsAndOffset normalizedCoordinates = new PointsAndOffset();
 		normalizedCoordinates.offset = new long[] { dX, dY };
-		normalizedCoordinates.coordinates = new ArrayList<float[]>();
+		normalizedCoordinates.points = new ArrayList<Point[]>();
 
 		for (double[] line : doubleCoordinates) {
-			float[] floatCoordinate = new float[line.length];
-			normalizedCoordinates.coordinates.add(floatCoordinate);
+			Point[] points = new Point[line.length / 2];
+			normalizedCoordinates.points.add(points);
 			for (int i = 0; i < line.length; i += 2) {
-				floatCoordinate[i] = (float) (line[i] + dX);
-				floatCoordinate[i + 1] = (float) (line[i + 1] + dY);
+				points[i / 2] = new PointComponent((float) (line[i] + dX),
+						(float) (line[i + 1] + dY));
 			}
 		}
 		return normalizedCoordinates;
 	}
-}
-
-class ImportedCoordinates {
-	List<float[]> coordinates;
-	long[] offset;
 }
