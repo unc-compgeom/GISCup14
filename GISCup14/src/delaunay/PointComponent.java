@@ -41,6 +41,15 @@ public class PointComponent implements Point {
 	}
 
 	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Point) {
+			return compareTo((Point) obj) == 0;
+		} else {
+			return super.equals(obj);
+		}
+	}
+
+	@Override
 	public float getX() {
 		return x;
 	}

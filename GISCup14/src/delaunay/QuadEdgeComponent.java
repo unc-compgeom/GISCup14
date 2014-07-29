@@ -7,7 +7,8 @@ public class QuadEdgeComponent implements QuadEdge {
 	private final Edge first;
 
 	QuadEdgeComponent() {
-		final int scale = 16364;
+		final int scale = (int) Math.pow(2, 29); // TODO correctly initialize
+													// the quadedge
 		final Point a = new PointComponent(-1 * scale - 1, 2 * scale);
 		final Point b = new PointComponent(-1 * scale, -1 * scale);
 		final Point c = new PointComponent(2 * scale, -1 * scale);

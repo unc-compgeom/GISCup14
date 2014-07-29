@@ -1,6 +1,6 @@
 package delaunay;
 
-class DuplicatePointException extends Exception {
+public class DuplicatePointException extends Exception {
 
 	private static final long serialVersionUID = -4845293946512047629L;
 	private final Point duplicate;
