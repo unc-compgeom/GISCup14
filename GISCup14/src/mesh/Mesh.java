@@ -1,8 +1,8 @@
 package mesh;
 
+import gml.ArcsPointsAndOffsets;
 import gml.ExportGML;
 import gml.ImportGML;
-import gml.PointsArcsAndOffsets;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -18,7 +18,7 @@ public class Mesh {
 		args = new String[] { "src\\td1", "src\\td2", "src\\td3" };
 		for (final String folderName : args) {
 			// import points
-			final PointsArcsAndOffsets imported = ImportGML.importGML(
+			final ArcsPointsAndOffsets imported = ImportGML.importGML(
 					folderName + "\\points_out.txt", folderName
 							+ "\\lines_out.txt");
 
@@ -27,19 +27,21 @@ public class Mesh {
 
 			// take first and last from lines_out for each line, excluding
 			// duplicates
-			for (final Point[] points : imported.arcs) {
-				// beginning of line
-				if (!triangulationPoints.contains(points[0])) {
-					triangulationPoints.add(points[0]);
+			for (final Point[] arc : imported.arcs) {
+				// beginning of arc
+				if (!triangulationPoints.contains(arc[0])) {
+					triangulationPoints.add(arc[0]);
 				}
 				// end of line
-				if (!triangulationPoints.contains(points[points.length - 1])) {
-					triangulationPoints.add(points[points.length - 1]);
+				if (!triangulationPoints.contains(arc[arc.length - 1])) {
+					triangulationPoints.add(arc[arc.length - 1]);
 				}
 			}
 			for (final Point[] points : imported.points) {
 				for (final Point point : points) {
-					triangulationPoints.add(point);
+					if (!triangulationPoints.contains(point)) {
+						triangulationPoints.add(point);
+					}
 				}
 			}
 			final Subdivision triangulation = delaunay.DelaunayTriangulation
@@ -48,13 +50,13 @@ public class Mesh {
 			System.out.printf("Offset is %d, %d\n", imported.offsetLatitude,
 					imported.offsetLongitude);
 
-			final List<Point[]> simplifiedLines = new LinkedList<Point[]>();
+			final List<Point[]> simplifiedArcs = new LinkedList<Point[]>();
 			for (int i = 1; i < imported.arcs.size(); i++) {
 				final Point[] arc = imported.arcs.get(i);
 				final int arcLength = arc.length;
 				if (arcLength < 4) {
 					// do not simplify short arcs
-					simplifiedLines.add(arc);
+					simplifiedArcs.add(arc);
 				} else {
 					// locate edges for each line point
 					final Edge[] locatedEdges = new Edge[arc.length];
@@ -73,7 +75,6 @@ public class Mesh {
 					// arc endpoints
 					final int term = arc.length; // for now
 					// how to find a ring around the endpoint?
-
 					final Edge[] edgeStack = new Edge[arc.length + 1];
 					final int[] edgeNumberStack = new int[arc.length + 1];
 					int sp = 1;
@@ -98,18 +99,18 @@ public class Mesh {
 					if (sp < 1) {
 						idx = new int[] { 0, arcLength - 1 };
 						final Point[] simplified = { arc[idx[0]], arc[idx[1]] };
-						simplifiedLines.add(simplified);
+						simplifiedArcs.add(simplified);
 					} else {
 						final Point[] simplified = new Point[sp];
 						simplified[0] = arc[0];
 						for (int j = 1; j < sp; j++) {
 							simplified[j] = arc[edgeNumberStack[j]];
 						}
-						simplifiedLines.add(simplified);
+						simplifiedArcs.add(simplified);
 					}
 				}
 			}
-			ExportGML.exportGML(simplifiedLines, imported.offsetLatitude,
+			ExportGML.exportGML(simplifiedArcs, imported.offsetLatitude,
 					imported.offsetLongitude, folderName);
 		}
 	}

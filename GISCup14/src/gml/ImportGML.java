@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,28 +14,17 @@ import delaunay.PointComponent;
 
 public class ImportGML {
 
-	public static PointsArcsAndOffsets importGML(final String pointsFileName,
-			final String linesFileName) throws IOException {
+	public static ArcsPointsAndOffsets importGML(final String pointsFileName,
+			final String arcsFileName) throws IOException {
 
+		final List<double[]> doubleArcsCoordinates = readFile(arcsFileName);
 		final List<double[]> doublePointsCoordinates = readFile(pointsFileName);
-		final List<double[]> doubleArcsCoordinates = readFile(linesFileName);
-		/**
-		 * Keep track of the minimum latitude (in index 0) and longitude (in
-		 * index 1) so that we can normalize our results.
-		 */
-		double minimumLatitude = doublePointsCoordinates.get(0)[0];
-		double minimumLongitude = doublePointsCoordinates.get(0)[1];
+
+		// find the minimum latitude and longitude from both of these point sets
+		// so that we can normalize these points
+		double minimumLatitude = doubleArcsCoordinates.get(0)[0];
+		double minimumLongitude = doubleArcsCoordinates.get(0)[1];
 		// find minimum latitude longitude
-		for (final double[] points : doublePointsCoordinates) {
-			for (int i = 0; i < points.length; i += 2) {
-				if (points[i] < minimumLatitude) {
-					minimumLatitude = points[i];
-				}
-				if (points[i + 1] < minimumLongitude) {
-					minimumLongitude = points[i + 1];
-				}
-			}
-		}
 		for (final double[] arc : doubleArcsCoordinates) {
 			for (int i = 0; i < arc.length; i += 2) {
 				if (arc[i] < minimumLatitude) {
@@ -47,31 +35,41 @@ public class ImportGML {
 				}
 			}
 		}
-		// normalize points and arcs
+		for (final double[] coordinateSet : doublePointsCoordinates) {
+			for (int i = 0; i < coordinateSet.length; i += 2) {
+				if (coordinateSet[i] < minimumLatitude) {
+					minimumLatitude = coordinateSet[i];
+				}
+				if (coordinateSet[i + 1] < minimumLongitude) {
+					minimumLongitude = coordinateSet[i + 1];
+				}
+			}
+		}
 		final long dX = (long) minimumLatitude;
 		final long dY = (long) minimumLongitude;
-
-		final List<Point[]> points = new ArrayList<Point[]>();
-		final List<Point[]> lines = new ArrayList<Point[]>();
+		// normalize points and arcs
+		final List<Point[]> points = new LinkedList<Point[]>();
+		final List<Point[]> arcs = new LinkedList<Point[]>();
 		for (final double[] doublePoints : doublePointsCoordinates) {
 			final Point[] floatPoints = new Point[doublePoints.length / 2];
 			points.add(floatPoints);
-			for (int i = 0; i < doublePoints.length; i += 2) {
-				floatPoints[i / 2] = new PointComponent(
-						(float) (doublePoints[i] - dX),
-						(float) (doublePoints[i + 1] - dY));
+			for (int i = 0; i < floatPoints.length; i++) {
+				floatPoints[i] = new PointComponent(
+						(float) (doublePoints[i * 2] - dX),
+						(float) (doublePoints[i * 2 + 1] - dY));
+
 			}
 		}
 		for (final double[] doubleArc : doubleArcsCoordinates) {
 			final Point[] floatArc = new Point[doubleArc.length / 2];
-			points.add(floatArc);
-			for (int i = 0; i < doubleArc.length; i += 2) {
-				floatArc[i / 2] = new PointComponent(
-						(float) (doubleArc[i] - dX) / 32,
-						(float) (doubleArc[i + 1] - dY) / 32);
+			arcs.add(floatArc);
+			for (int i = 0; i < floatArc.length; i++) {
+				floatArc[i] = new PointComponent(
+						(float) (doubleArc[i * 2] - dX),
+						(float) (doubleArc[i * 2 + 1] - dY));
 			}
 		}
-		return new PointsArcsAndOffsets(points, lines, dX, dY);
+		return new ArcsPointsAndOffsets(arcs, points, dX, dY);
 	}
 
 	private static List<double[]> readFile(String fileName) throws IOException {
