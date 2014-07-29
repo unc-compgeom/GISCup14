@@ -39,9 +39,7 @@ public class Mesh {
 			}
 			for (final Point[] points : imported.points) {
 				for (final Point point : points) {
-					if (!triangulationPoints.contains(point)) {
-						triangulationPoints.add(point);
-					}
+					triangulationPoints.add(point);
 				}
 			}
 			final Subdivision triangulation = delaunay.DelaunayTriangulation
@@ -51,10 +49,9 @@ public class Mesh {
 					imported.offsetLongitude);
 
 			final List<Point[]> simplifiedArcs = new LinkedList<Point[]>();
-			for (int i = 1; i < imported.arcs.size(); i++) {
+			for (int i = 0; i < imported.arcs.size(); i++) {
 				final Point[] arc = imported.arcs.get(i);
-				final int arcLength = arc.length;
-				if (arcLength < 4) {
+				if (arc.length < 4) {
 					// do not simplify short arcs
 					simplifiedArcs.add(arc);
 				} else {
@@ -67,43 +64,44 @@ public class Mesh {
 							// should not be thrown
 						}
 					}
-					// arc startpoints
-					final int start = 0; // for now
-					// how to find first arc point outside of the ring around
-					// arc startPoint?
 
-					// arc endpoints
-					final int term = arc.length; // for now
-					// how to find a ring around the endpoint?
+					// do the stacking/popping of triangles to get a sequence of
+					// triangles that the shortest path must visit on its way
+					// from start to end
+
 					final Edge[] edgeStack = new Edge[arc.length + 1];
 					final int[] edgeNumberStack = new int[arc.length + 1];
-					int sp = 1;
-					for (int j = start + 1; j < term; j++) {
-						if (locatedEdges[j] != edgeStack[sp]) {
-							// if next edge is different from the current
-							if (locatedEdges[j] != edgeStack[sp - 1]) {
-								// if previous edge is different from the
-								// current
-								sp++;
-								edgeStack[sp] = locatedEdges[j];
-								edgeNumberStack[sp] = j;
-							} else {
-								// eliminate loop bug if path segment crosses
-								// several triangles only to return across a
-								// different edge than it left
-								sp--;
-							}
+					int sp = 0;
+					// push the first edge crossed onto the stack
+					edgeStack[sp++] = locatedEdges[0];
+					// for each subsequent edge
+					for (int j = 1; j < arc.length; j++) {
+						if (edgeStack[sp - 1].sym() == locatedEdges[j]) {
+							// is this edge's reverse on top of the stack?
+							// if so, pop it off
+							System.out.println("popped edge");
+							sp--;
+						} else if (edgeStack[sp - 1] == locatedEdges[j]) {
+							// is this edge on the top of the stack?
+							// do nothing.
+						} else {
+							// else we're crossing a new edge, so push it onto
+							// the stack
+							System.out.println("crossed new edge");
+							edgeNumberStack[sp] = j;
+							edgeStack[sp++] = locatedEdges[j];
+
 						}
 					}
-					int[] idx;
+					// eliminate any looping around the start point
+					// TODO
 					if (sp < 1) {
-						idx = new int[] { 0, arcLength - 1 };
-						final Point[] simplified = { arc[idx[0]], arc[idx[1]] };
+						final Point[] simplified = { arc[0],
+								arc[arc.length - 1] };
 						simplifiedArcs.add(simplified);
 					} else {
 						final Point[] simplified = new Point[sp];
-						simplified[0] = arc[0];
-						for (int j = 1; j < sp; j++) {
+						for (int j = 0; j < sp; j++) {
 							simplified[j] = arc[edgeNumberStack[j]];
 						}
 						simplifiedArcs.add(simplified);
