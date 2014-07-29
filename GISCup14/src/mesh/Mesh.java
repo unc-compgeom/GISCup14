@@ -42,7 +42,6 @@ public class Mesh {
 					triangulationPoints.add(point);
 				}
 			}
-			System.out.println(triangulationPoints.size());
 			final Subdivision triangulation = delaunay.DelaunayTriangulation
 					.triangulate(triangulationPoints);
 			System.out.println(folderName);
