@@ -87,23 +87,51 @@ public class Mesh {
 						} else {
 							// else we're crossing a new edge, so push it onto
 							// the stack
-							System.out.println("crossed new edge");
 							edgeNumberStack[sp] = j;
 							edgeStack[sp++] = locatedEdges[j];
 
 						}
 					}
 					// eliminate any looping around the start point
-					// TODO
+					// leave the first point, remove at most up to index sp - 2;
+					int start = 1;
+					for (int j = 2; j < sp - 1; j++) {
+						if (edgeIsPartOfRing(edgeStack[j], edgeStack[0])) {
+							start = j;
+						} else {
+							break;
+						}
+					}
+					// eliminate any looping around the end point
+					// leave the last point, remove at must up to index 1;
+					/**
+					 * The index of the last point (inclusive) inside the
+					 * triangulation ring around the termination point
+					 */
+					int term = sp - 2;
+					for (int j = term - 1; j > 0; j--) {
+						if (edgeIsPartOfRing(edgeStack[j], edgeStack[sp - 1])) {
+							term = j;
+						} else {
+							break;
+						}
+					}
+					if (term < start) {
+						term = start;
+					}
 					if (sp < 1) {
 						final Point[] simplified = { arc[0],
 								arc[arc.length - 1] };
 						simplifiedArcs.add(simplified);
 					} else {
-						final Point[] simplified = new Point[sp];
-						for (int j = 0; j < sp; j++) {
-							simplified[j] = arc[edgeNumberStack[j]];
+						int size = (term - start) + 3;
+						int index = 0;
+						final Point[] simplified = new Point[size];
+						simplified[index++] = arc[0];
+						for (int j = start; j <= term; j++) {
+							simplified[index++] = arc[edgeNumberStack[j]];
 						}
+						simplified[index++] = arc[arc.length - 1];
 						simplifiedArcs.add(simplified);
 					}
 				}
@@ -111,5 +139,16 @@ public class Mesh {
 			ExportGML.exportGML(simplifiedArcs, imported.offsetLatitude,
 					imported.offsetLongitude, folderName);
 		}
+	}
+
+	private static boolean edgeIsPartOfRing(Edge test, Edge fromOrigin) {
+		Edge e = fromOrigin;
+		do {
+			if (e == test || e.lNext() == test || e.lNext().lNext() == test) {
+				return true;
+			}
+			e = e.oNext();
+		} while (e != fromOrigin);
+		return false;
 	}
 }
