@@ -90,6 +90,11 @@ public class Mesh {
 				}
 				// eliminate any looping around the start point
 				// leave the first point, remove at most up to index sp - 2;
+				/**
+				 * The index of the last point (inclusive) inside the
+				 * triangulation ring around the start point before the path
+				 * leaves the ring.
+				 */
 				int start = 1;
 				for (int j = 2; j < sp - 1; j++) {
 					if (edgeIsPartOfRing(edgeStack[j], edgeStack[0])) {
@@ -102,7 +107,8 @@ public class Mesh {
 				// leave the last point, remove at must up to index 1;
 				/**
 				 * The index of the last point (inclusive) inside the
-				 * triangulation ring around the termination point
+				 * triangulation ring around the termination point before the
+				 * path leaves the ring.
 				 */
 				int term = sp - 2;
 				for (int j = term - 1; j > 0; j--) {
@@ -133,7 +139,6 @@ public class Mesh {
 		}
 		ExportGML.exportGML(simplifiedArcs, imported.offsetLatitude,
 				imported.offsetLongitude, folderName);
-
 	}
 
 	private static boolean edgeIsPartOfRing(Edge test, Edge fromOrigin) {
