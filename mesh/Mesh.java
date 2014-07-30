@@ -139,6 +139,18 @@ public class Mesh {
 		}
 		ExportGML.exportGML(simplifiedArcs, imported.offsetLatitude,
 				imported.offsetLongitude, folderName);
+		// statistics
+		int originalSize = 0;
+		for (Point[] arc : imported.arcs) {
+			originalSize += arc.length;
+		}
+		int simplifiedSize = 0;
+		for (Point[] arc : simplifiedArcs) {
+			simplifiedSize += arc.length;
+		}
+		System.out
+				.printf("  simplification: %f percent\n",
+						((originalSize - simplifiedSize) / ((double) originalSize)) * 100);
 	}
 
 	private static boolean edgeIsPartOfRing(Edge test, Edge fromOrigin) {

@@ -19,8 +19,8 @@ public class ExportGML {
 			writer.write(lineCount++
 					+ ":<gml:LineString srsName=\"EPSG:54004\" xmlns:gml=\"http://www.opengis.net/gml\"><gml:coordinates decimal=\".\" cs=\",\" ts=\" \">");
 			for (Point point : points) {
-				writer.write((double) (point.getX() + offsetLatitude) + ","
-						+ (double) (point.getY() + offsetLongitude) + " ");
+				writer.write((double) (point.x + offsetLatitude) + ","
+						+ (double) (point.y + offsetLongitude) + " ");
 			}
 			writer.write("</gml:coordinates></gml:LineString>\n");
 		}

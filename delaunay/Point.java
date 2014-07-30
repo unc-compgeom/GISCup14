@@ -1,94 +1,32 @@
 package delaunay;
 
-public interface Point extends Comparable<Point>, Cloneable {
+public class Point implements Comparable<Point> {
 
-	/**
-	 * Computes the distance squared from this point to point p.
-	 *
-	 * @param p
-	 *            a point
-	 * @return the distance squared from this point to point p.
-	 */
-	public double distanceSquared(Point p);
+	public final float x;
+	public final float y;
 
-	/**
-	 * Divides this point's points by a scalar. Returns a new point with
-	 * location (this.x/i, this.y/i).
-	 *
-	 * @param i
-	 *            the scalar
-	 * @return a new point at location (this.x/i, this.y/i).
-	 */
-	public Point div(float i);
+	public Point(final float x, final float y) {
+		this.x = x;
+		this.y = y;
+	}
 
-	/**
-	 * Computes the dot product of this point with point p. Returns this.x*p.x +
-	 * this.y * p.y.
-	 *
-	 * @param p
-	 *            the point
-	 * @return this.x*p.x + this.y * p.y.
-	 */
-	public double dot(Point p);
+	@Override
+	public int compareTo(final Point p) {
+		// lexicographical comparison
+		return x < p.x ? -1 : x > p.x ? 1 : y < p.y ? -1 : y > p.y ? 1 : 0;
+	}
 
-	/**
-	 * Gets the x-coordinate.
-	 *
-	 * @return the x-coordinate.
-	 */
-	public float getX();
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Point) {
+			return compareTo((Point) obj) == 0;
+		} else {
+			return super.equals(obj);
+		}
+	}
 
-	/**
-	 * Gets the y-coordinate.
-	 *
-	 * @return the y-coordinate.
-	 */
-	public float getY();
-
-	/**
-	 * Multiplies this point's points by a scalar. Returns a new point with
-	 * location (this.x*i, this.y*i).
-	 *
-	 * @param i
-	 *            the scalar
-	 * @return a new point at location (this.x*i, this.y*i).
-	 */
-	public Point mult(float i);
-
-	/**
-	 * Adds this point's points to another point's points. Returns a
-	 * new point at location (this.x + p.x, this.y + p.y).
-	 *
-	 * @param p
-	 *            the point to add
-	 * @return a new point at location (this.x + p.x, this.y + p.y).
-	 */
-	public Point plus(Point p);
-
-	/**
-	 * Sets the x-coordinate.
-	 *
-	 * @param x
-	 *            the x-coordinate.
-	 */
-	public void setX(float x);
-
-	/**
-	 * Sets the y-coordinate.
-	 *
-	 * @param y
-	 *            the y-coordinate.
-	 */
-	public void setY(float y);
-
-	/**
-	 * Subtracts another point's points from this point's points.
-	 * Returns a new point with location (this.x - p.x, this.y - p.y).
-	 *
-	 * @param p
-	 *            the point to subtract
-	 * @return a new point at location (this.x - p.x, this.y - p.y).
-	 */
-	public Point sub(Point p);
-
+	@Override
+	public String toString() {
+		return "(" + x + ", " + y + ")";
+	}
 }

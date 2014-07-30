@@ -1,9 +1,8 @@
 package delaunay;
 
 /**
- * An interface that specifies the edge data structure which implements the
- * quadedge algebra. The quadedge algebra was described in a paper by Guibas and
- * Stolfi,
+ * An class that specifies the edge data structure which implements the quadedge
+ * algebra. The quadedge algebra was described in a paper by Guibas and Stolfi,
  * "Primitives for the manipulation of general subdivisions and the computation of Voronoi diagrams"
  * , ACM Transactions on Graphics, 4(2), 1985, 75-123.
  *
@@ -12,90 +11,118 @@ package delaunay;
  * using a series of rot() operations. QuadEdges in a {@link Subdivision} are
  * linked together via their next references.
  */
-public interface Edge {
+public class Edge {
+	private Edge next;
+	private Point o;
+	private Edge rot;
+
 	/**
 	 * Gets the {@link Point} for the edge's destination
 	 *
 	 * @return the destination point
 	 */
-	public Point dest();
+	public Point dest() {
+		return sym().orig();
+	}
 
 	/**
 	 * Gets the next CCW {@link Edge} around (into) the destination of this edge
 	 *
 	 * @return the next destination edge
 	 */
-	public Edge dNext();
+	public Edge dNext() {
+		return sym().oNext().sym();
+	}
 
 	/**
 	 * Gets the next CW {@link Edge} around (into) the destination of this edge
 	 *
 	 * @return the previous destination edge
 	 */
-	public Edge dPrev();
+	public Edge dPrev() {
+		return invRot().oNext().invRot();
+	}
 
 	/**
 	 * Gets the dual of this edge, directed from its left to its right
 	 *
 	 * @return the inverse rotated edge
 	 */
-	public Edge invRot();
+	public Edge invRot() {
+		return rot.rot().rot();
+	}
 
 	/**
 	 * Gets the CCW {@link Edge} around the left face following this edge
 	 *
 	 * @return the next left face edge
 	 */
-	public Edge lNext();
+	public Edge lNext() {
+		return invRot().oNext().rot();
+	}
 
 	/**
 	 * Gets the CCW {@link Edge} around the left face before this edge
 	 *
 	 * @return the previous left face edge
 	 */
-	public Edge lPrev();
+	public Edge lPrev() {
+		return oNext().sym();
+	}
 
 	/**
 	 * Gets the next CCW {@link Edge} around the origin of this edge
 	 *
 	 * @return the next linked edge
 	 */
-	public Edge oNext();
+	public Edge oNext() {
+		return next;
+	}
 
 	/**
 	 * Gets the next CW {@link Edge} around (from) the origin of this edge
 	 *
 	 * @return the previous edge
 	 */
-	public Edge oPrev();
+	public Edge oPrev() {
+		return rot().oNext().rot();
+	}
 
 	/**
 	 * Gets the {@link Point} for the edge's origin
 	 *
 	 * @return the origin point
 	 */
-	public Point orig();
+	public Point orig() {
+		return o;
+	}
 
 	/**
 	 * Gets the {@link Edge} around the right face ccw following this edge
 	 *
 	 * @return the next right face edge
 	 */
-	public Edge rNext();
+	public Edge rNext() {
+		return rot().oNext().invRot();
+	}
 
 	/**
 	 * Gets the dual of this edge, directed from its right to its left
 	 *
 	 * @return the rotated edge
 	 */
-	public Edge rot();
+	public Edge rot() {
+		return rot;
+	}
 
 	/**
 	 * Gets the {@link Edge} around the right face ccw before this edge
 	 *
 	 * @return the previous right face edge
 	 */
-	public Edge rPrev();
+	public Edge rPrev() {
+		return sym().oNext();
+	}
 
 	/**
 	 * Sets the points of this edge.
@@ -105,7 +132,16 @@ public interface Edge {
 	 * @param destination
 	 *            the new destination
 	 */
-	public void setCoordinates(Point origin, Point destination);
+	public void setCoordinates(final Point origin, final Point destination) {
+		if (o == null || dest() == null) {
+			setOrig(origin);
+			setDest(destination);
+		} else {
+			setOrig(origin);
+			setDest(destination);
+		}
+
+	}
 
 	/**
 	 * Sets the {@link Point} for this edge's destination
@@ -113,7 +149,9 @@ public interface Edge {
 	 * @param d
 	 *            the destination point
 	 */
-	public void setDest(Point d);
+	public void setDest(final Point d) {
+		sym().setOrig(d);
+	}
 
 	/**
 	 * Sets the connected {@link Edge}
@@ -121,7 +159,9 @@ public interface Edge {
 	 * @param next
 	 *            the next edge
 	 */
-	public void setNext(Edge next);
+	public void setNext(final Edge next) {
+		this.next = next;
+	}
 
 	/**
 	 * Sets the {@link Point} for this edge's origin
@@ -129,7 +169,9 @@ public interface Edge {
 	 * @param o
 	 *            the origin point
 	 */
-	public void setOrig(Point o);
+	public void setOrig(final Point o) {
+		this.o = o;
+	}
 
 	/**
 	 * Sets the dual of this edge, directed from its right to its left
@@ -137,12 +179,21 @@ public interface Edge {
 	 * @param rot
 	 *            the rotated edge
 	 */
-	public void setRot(Edge rot);
+	public void setRot(final Edge rot) {
+		this.rot = rot;
+	}
 
 	/**
 	 * Gets the {@link Edge} from the destination to the origin of this edge
 	 *
 	 * @return the sym of this edge
 	 */
-	public Edge sym();
+	public Edge sym() {
+		return rot.rot();
+	}
+
+	@Override
+	public String toString() {
+		return orig() + "-" + dest();
+	}
 }

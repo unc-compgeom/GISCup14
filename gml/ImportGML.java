@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Queue;
 
 import delaunay.Point;
-import delaunay.PointComponent;
 
 public class ImportGML {
 
@@ -54,8 +53,7 @@ public class ImportGML {
 			final Point[] floatPoints = new Point[doublePoints.length / 2];
 			points.add(floatPoints);
 			for (int i = 0; i < floatPoints.length; i++) {
-				floatPoints[i] = new PointComponent(
-						(float) (doublePoints[i * 2] - dX),
+				floatPoints[i] = new Point((float) (doublePoints[i * 2] - dX),
 						(float) (doublePoints[i * 2 + 1] - dY));
 
 			}
@@ -64,8 +62,7 @@ public class ImportGML {
 			final Point[] floatArc = new Point[doubleArc.length / 2];
 			arcs.add(floatArc);
 			for (int i = 0; i < floatArc.length; i++) {
-				floatArc[i] = new PointComponent(
-						(float) (doubleArc[i * 2] - dX),
+				floatArc[i] = new Point((float) (doubleArc[i * 2] - dX),
 						(float) (doubleArc[i * 2 + 1] - dY));
 			}
 		}

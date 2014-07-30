@@ -17,7 +17,12 @@ public class Predicate {
 	 * @return true iff <tt>p</tt> is ahead of <tt>qr</tt>.
 	 */
 	private static boolean ahead(final Point p, final Point q, final Point r) {
-		return p.sub(q).dot(r.sub(q)) > distSquared(q, r);
+		float pqx = (p.x - q.x);
+		float pqy = (p.y - q.y);
+		float rqx = (r.x - q.x);
+		float rqy = (r.y - q.y);
+		float dot = (pqx * rqx + pqy * rqy);
+		return dot > distSquared(q, r);
 	}
 
 	/**
@@ -32,7 +37,7 @@ public class Predicate {
 	public static double distSquared(final Point p, final Point q) {
 		// increment the call counter
 		// do work
-		final double dx = p.getX() - q.getX(), dy = p.getY() - q.getY();
+		final double dx = p.x - q.x, dy = p.y - q.y;
 		return dx * dx + dy * dy;
 	}
 
@@ -53,10 +58,10 @@ public class Predicate {
 	 */
 	public static boolean isPointInCircle(final Point test, final Point a,
 			final Point b, final Point c) {
-		final float ax = a.getX(), ay = a.getY();
-		final float bx = b.getX(), by = b.getY();
-		final float cx = c.getX(), cy = c.getY();
-		final float dx = test.getX(), dy = test.getY();
+		final float ax = a.x, ay = a.y;
+		final float bx = b.x, by = b.y;
+		final float cx = c.x, cy = c.y;
+		final float dx = test.x, dy = test.y;
 		final double det = (ax * ax + ay * ay) * triArea(b, c, test)
 				- (bx * bx + by * by) * triArea(a, c, test)
 				+ (cx * cx + cy * cy) * triArea(a, b, test)
@@ -79,7 +84,11 @@ public class Predicate {
 		final Point a = e.orig();
 		final Point b = e.dest();
 		if (triArea(a, b, p) == 0) {
-			final double dot = p.sub(a).dot(b.sub(a));
+			float pax = (p.x - a.x);
+			float pay = (p.y - a.y);
+			float bax = (b.x - a.x);
+			float bay = (b.y - a.y);
+			float dot = (pax * bax + pay * bay);
 			final double distSq = distSquared(a, b);
 			return 0 <= dot && dot <= distSq;
 		} else {
@@ -112,7 +121,10 @@ public class Predicate {
 	 * @return twice the signed area
 	 */
 	private static double triArea(final Point a, final Point b, final Point c) {
-		return b.sub(a).getX() * c.sub(a).getY() - b.sub(a).getY()
-				* c.sub(a).getX();
+		float bax = b.x - a.x;
+		float cay = c.y - a.y;
+		float bay = b.y - a.y;
+		float cax = c.x - a.x;
+		return bax * cay - bay * cax; // det
 	}
 }

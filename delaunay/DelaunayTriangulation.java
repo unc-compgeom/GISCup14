@@ -12,7 +12,7 @@ public class DelaunayTriangulation {
 	 * @return a {@link Subdivision} representing the Delaunay Triangulation
 	 */
 	public static Subdivision triangulate(Collection<Point> points) {
-		final Subdivision s = new SubdivisionComponent();
+		final Subdivision s = new Subdivision();
 		for (final Point p : points) {
 			try {
 				s.insertSite(p);
