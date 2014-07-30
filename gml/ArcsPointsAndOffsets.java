@@ -1,8 +1,8 @@
 package gml;
 
-import java.util.List;
-
 import delaunay.Point;
+
+import java.util.List;
 
 public class ArcsPointsAndOffsets {
 	public final List<Point[]> arcs;

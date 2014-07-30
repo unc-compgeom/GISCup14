@@ -14,7 +14,7 @@ public class Subdivision {
 	public Subdivision() {
 		// TODO find a triangle large enough to encompass <tt>points</tt>
 		qe = new QuadEdge();
-		startingEdge = qe.get(0);
+		startingEdge = qe.getFirst();
 	}
 
 	/**
@@ -69,7 +69,7 @@ public class Subdivision {
 	 *             iff <tt>p</tt> is already in this subdivision
 	 *
 	 */
-	public Edge locate(Point q) throws DuplicatePointException {
+	public Edge locate(final Point q) throws DuplicatePointException {
 
 		Edge e = startingEdge;
 		if (!Predicate.rightOrAhead(e.dest(), e.orig(), q)) {
@@ -77,13 +77,13 @@ public class Subdivision {
 		}
 		final Point p = e.orig();
 		if (p == q) {
-			throw new DuplicatePointException(q);
+			throw new DuplicatePointException();
 		}
 		// invariant: e intersects pq with e.dest() on, right, or ahead of pq.
 		do {
 			if (q == e.dest()) {
 				// duplicate point
-				throw new DuplicatePointException(q);
+				throw new DuplicatePointException();
 			} else if (!Predicate.leftOrAhead(q, e.orig(), e.dest())) {
 				// q is on an edge or inside a triangle edge
 				return e.sym();

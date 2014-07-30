@@ -1,5 +1,7 @@
 package gml;
 
+import delaunay.Point;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -8,8 +10,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-
-import delaunay.Point;
 
 public class ImportGML {
 
@@ -69,14 +69,15 @@ public class ImportGML {
 		return new ArcsPointsAndOffsets(arcs, points, dX, dY);
 	}
 
-	private static List<double[]> readFile(String fileName) throws IOException {
+	private static List<double[]> readFile(final String fileName)
+			throws IOException {
 		final File f = new File(fileName);
 		final BufferedReader r = new BufferedReader(new FileReader(f));
 		assert r.ready(); // the reader should be ready
 		/**
 		 * Store the converted coordinates in this array
 		 */
-		List<double[]> doubleCoordinates = new LinkedList<double[]>();
+		final List<double[]> doubleCoordinates = new LinkedList<double[]>();
 		/**
 		 * Store each line's unprocessed coordinates in this String queue.
 		 */
@@ -91,11 +92,11 @@ public class ImportGML {
 			// for each line
 			// pass <gml:LineString...>
 			while (r.read() != '>') {
-				;
+				// skip characters
 			}
 			// pass <gml:points...>
 			while (r.read() != '>') {
-				;
+				// skip characters
 			}
 			stringCoordinates = new LinkedList<String>();
 			String coordinate;
@@ -131,7 +132,7 @@ public class ImportGML {
 			}
 			// process readCoordinates
 			final double[] processedCoordinates = new double[stringCoordinates
-					.size()];
+			                                                 .size()];
 			final Iterator<String> it = stringCoordinates.iterator();
 			for (int i = 0; i < processedCoordinates.length; i++) {
 				processedCoordinates[i] = Double.parseDouble(it.next());

@@ -48,7 +48,7 @@ public class Edge {
 	 *
 	 * @return the inverse rotated edge
 	 */
-	public Edge invRot() {
+	Edge invRot() {
 		return rot.rot().rot();
 	}
 
@@ -149,7 +149,7 @@ public class Edge {
 	 * @param d
 	 *            the destination point
 	 */
-	public void setDest(final Point d) {
+	void setDest(final Point d) {
 		sym().setOrig(d);
 	}
 
@@ -169,7 +169,7 @@ public class Edge {
 	 * @param o
 	 *            the origin point
 	 */
-	public void setOrig(final Point o) {
+	void setOrig(final Point o) {
 		this.o = o;
 	}
 

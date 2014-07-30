@@ -1,20 +1,32 @@
 package mesh;
 
+import delaunay.DuplicatePointException;
+import delaunay.Edge;
+import delaunay.Point;
+import delaunay.Subdivision;
 import gml.ArcsPointsAndOffsets;
 import gml.ExportGML;
 import gml.ImportGML;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import delaunay.DuplicatePointException;
-import delaunay.Edge;
-import delaunay.Point;
-import delaunay.Subdivision;
-
 public class Mesh {
-	public static void simplify(String folderName) throws IOException {
+	private static boolean edgeIsPartOfRing(final Edge test,
+			final Edge fromOrigin) {
+		Edge e = fromOrigin;
+		do {
+			if (e == test || e.lNext() == test || e.lNext().lNext() == test) {
+				return true;
+			}
+			e = e.oNext();
+		} while (e != fromOrigin);
+		return false;
+	}
+
+	public static void simplify(final String folderName) throws IOException {
 		// import points
 		final ArcsPointsAndOffsets imported = ImportGML.importGML(folderName
 				+ "\\points_out.txt", folderName + "\\lines_out.txt");
@@ -35,9 +47,7 @@ public class Mesh {
 			}
 		}
 		for (final Point[] points : imported.points) {
-			for (final Point point : points) {
-				triangulationPoints.add(point);
-			}
+			Collections.addAll(triangulationPoints, points);
 		}
 		final Subdivision triangulation = delaunay.DelaunayTriangulation
 				.triangulate(triangulationPoints);
@@ -61,7 +71,7 @@ public class Mesh {
 					}
 				}
 
-				// do the stacking/popping of triangles to get a sequence of
+				// do the stacking/popping of triangles to getFirst a sequence of
 				// triangles that the shortest path must visit on its way
 				// from start to end
 
@@ -125,14 +135,14 @@ public class Mesh {
 					final Point[] simplified = { arc[0], arc[arc.length - 1] };
 					simplifiedArcs.add(simplified);
 				} else {
-					int size = (term - start) + 3;
+					final int size = term - start + 3;
 					int index = 0;
 					final Point[] simplified = new Point[size];
 					simplified[index++] = arc[0];
 					for (int j = start; j <= term; j++) {
 						simplified[index++] = arc[edgeNumberStack[j]];
 					}
-					simplified[index++] = arc[arc.length - 1];
+					simplified[index] = arc[arc.length - 1];
 					simplifiedArcs.add(simplified);
 				}
 			}
@@ -141,26 +151,14 @@ public class Mesh {
 				imported.offsetLongitude, folderName);
 		// statistics
 		int originalSize = 0;
-		for (Point[] arc : imported.arcs) {
+		for (final Point[] arc : imported.arcs) {
 			originalSize += arc.length;
 		}
 		int simplifiedSize = 0;
-		for (Point[] arc : simplifiedArcs) {
+		for (final Point[] arc : simplifiedArcs) {
 			simplifiedSize += arc.length;
 		}
-		System.out
-				.printf("  simplification: %f percent\n",
-						((originalSize - simplifiedSize) / ((double) originalSize)) * 100);
-	}
-
-	private static boolean edgeIsPartOfRing(Edge test, Edge fromOrigin) {
-		Edge e = fromOrigin;
-		do {
-			if (e == test || e.lNext() == test || e.lNext().lNext() == test) {
-				return true;
-			}
-			e = e.oNext();
-		} while (e != fromOrigin);
-		return false;
+		System.out.printf("  simplification: %f percent\n",
+				(originalSize - simplifiedSize) / (double) originalSize * 100);
 	}
 }

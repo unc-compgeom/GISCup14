@@ -1,9 +1,6 @@
 package delaunay;
 
-public class Predicate {
-	public enum Orientation {
-		CLOCKWISE, COLINEAR, COUNTERCLOCKWISE
-	}
+class Predicate {
 
 	/**
 	 * Tests if {@link Point} p is ahead of the segment from q to r.
@@ -17,11 +14,11 @@ public class Predicate {
 	 * @return true iff <tt>p</tt> is ahead of <tt>qr</tt>.
 	 */
 	private static boolean ahead(final Point p, final Point q, final Point r) {
-		float pqx = (p.x - q.x);
-		float pqy = (p.y - q.y);
-		float rqx = (r.x - q.x);
-		float rqy = (r.y - q.y);
-		float dot = (pqx * rqx + pqy * rqy);
+		final float pqx = p.x - q.x;
+		final float pqy = p.y - q.y;
+		final float rqx = r.x - q.x;
+		final float rqy = r.y - q.y;
+		final float dot = pqx * rqx + pqy * rqy;
 		return dot > distSquared(q, r);
 	}
 
@@ -34,7 +31,7 @@ public class Predicate {
 	 *            a point
 	 * @return distance squared between points p and q.
 	 */
-	public static double distSquared(final Point p, final Point q) {
+	private static double distSquared(final Point p, final Point q) {
 		// increment the call counter
 		// do work
 		final double dx = p.x - q.x, dy = p.y - q.y;
@@ -42,7 +39,7 @@ public class Predicate {
 	}
 
 	/**
-	 * Tests if a {@link Point} is inside the {@link Circle} defined by points
+	 * Tests if a {@link Point} is inside the circle defined by points
 	 * <tt>a</tt>, <tt>b</tt>, and <tt>color</tt>. Points must be oriented
 	 * counterclockwise.
 	 *
@@ -66,12 +63,7 @@ public class Predicate {
 				- (bx * bx + by * by) * triArea(a, c, test)
 				+ (cx * cx + cy * cy) * triArea(a, b, test)
 				- (dx * dx + dy * dy) * triArea(a, b, c);
-		final boolean isInCircle = det > 0;
-		return isInCircle;
-	}
-
-	public static boolean leftOf(final Point p, final Edge e) {
-		return triArea(p, e.orig(), e.dest()) > 0;
+		return det > 0;
 	}
 
 	public static boolean leftOrAhead(final Point p, final Point q,
@@ -84,11 +76,11 @@ public class Predicate {
 		final Point a = e.orig();
 		final Point b = e.dest();
 		if (triArea(a, b, p) == 0) {
-			float pax = (p.x - a.x);
-			float pay = (p.y - a.y);
-			float bax = (b.x - a.x);
-			float bay = (b.y - a.y);
-			float dot = (pax * bax + pay * bay);
+			final float pax = p.x - a.x;
+			final float pay = p.y - a.y;
+			final float bax = b.x - a.x;
+			final float bay = b.y - a.y;
+			final float dot = pax * bax + pay * bay;
 			final double distSq = distSquared(a, b);
 			return 0 <= dot && dot <= distSq;
 		} else {
@@ -121,10 +113,10 @@ public class Predicate {
 	 * @return twice the signed area
 	 */
 	private static double triArea(final Point a, final Point b, final Point c) {
-		float bax = b.x - a.x;
-		float cay = c.y - a.y;
-		float bay = b.y - a.y;
-		float cax = c.x - a.x;
+		final float bax = b.x - a.x;
+		final float cay = c.y - a.y;
+		final float bay = b.y - a.y;
+		final float cax = c.x - a.x;
 		return bax * cay - bay * cax; // det
 	}
 }

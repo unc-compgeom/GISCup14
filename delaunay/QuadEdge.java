@@ -1,7 +1,5 @@
 package delaunay;
 
-import java.util.Iterator;
-
 /**
  * A collection of four directed edges designed for representing general
  * subdivisions of orientable manifolds. This data structure is described in a
@@ -15,7 +13,7 @@ class QuadEdge {
 
 	QuadEdge() {
 		final int scale = (int) Math.pow(2, 29); // TODO correctly initialize
-													// the quadedge
+		// the quadedge
 		final Point a = new Point(-1 * scale - 1, 2 * scale);
 		final Point b = new Point(-1 * scale, -1 * scale);
 		final Point c = new Point(2 * scale, -1 * scale);
@@ -71,15 +69,13 @@ class QuadEdge {
 	 * which they are traversed. Order is arbitrary and will not be consistent
 	 * between splices.
 	 *
-	 * @param i
-	 *            edge number
 	 * @return the edge at traversal location i
 	 */
-	public Edge get(final int i) {
+	public Edge getFirst() {
 		int count = 0;
 		Edge e = first;
 		do {
-			if (i == count++) {
+			if (0 == count++) {
 				return e;
 			}
 			if (isWall(e) || isWall(e.sym())) {
@@ -95,35 +91,6 @@ class QuadEdge {
 		return e.orig().compareTo(e.lNext().orig()) >= 0
 				&& e.lNext().orig().compareTo(e.lPrev().orig()) > 0;
 
-	}
-
-	public Iterator<Edge> iterator() {
-		return new Iterator<Edge>() {
-			private final Edge e = first;
-			private Edge next = e;
-			private boolean firstCase = first != null;
-
-			@Override
-			public boolean hasNext() {
-				if (firstCase) {
-					firstCase = false;
-					return true;
-				} else {
-					return next != e;
-				}
-			}
-
-			@Override
-			public Edge next() {
-				final Edge tmp = next;
-				if (isWall(next) || isWall(next.sym())) {
-					next = next.rPrev();
-				} else {
-					next = next.oNext();
-				}
-				return tmp;
-			}
-		};
 	}
 
 	/**

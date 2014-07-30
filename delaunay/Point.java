@@ -17,7 +17,7 @@ public class Point implements Comparable<Point> {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj instanceof Point) {
 			return compareTo((Point) obj) == 0;
 		} else {
