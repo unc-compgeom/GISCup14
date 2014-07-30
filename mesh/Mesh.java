@@ -44,9 +44,8 @@ public class Mesh {
 			}
 			final Subdivision triangulation = delaunay.DelaunayTriangulation
 					.triangulate(triangulationPoints);
-			System.out.println(folderName);
-			System.out.printf("Offset is %d, %d\n", imported.offsetLatitude,
-					imported.offsetLongitude);
+			System.out.printf(folderName);
+			System.out.printf("...done\n");
 
 			final List<Point[]> simplifiedArcs = new LinkedList<Point[]>();
 			for (int i = 0; i < imported.arcs.size(); i++) {
