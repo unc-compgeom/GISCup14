@@ -1,9 +1,5 @@
 package mesh;
 
-import delaunay.DuplicatePointException;
-import delaunay.Edge;
-import delaunay.Point;
-import delaunay.Subdivision;
 import gml.ArcsPointsAndOffsets;
 import gml.ExportGML;
 import gml.ImportGML;
@@ -12,6 +8,11 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import delaunay.DuplicatePointException;
+import delaunay.Edge;
+import delaunay.Point;
+import delaunay.Subdivision;
 
 public class Mesh {
 	private static boolean edgeIsPartOfRing(final Edge test,
@@ -55,8 +56,8 @@ public class Mesh {
 		System.out.printf("...done\n");
 
 		final List<Point[]> simplifiedArcs = new LinkedList<Point[]>();
-		for (int i = 0; i < imported.arcs.size(); i++) {
-			final Point[] arc = imported.arcs.get(i);
+
+		for (Point[] arc : imported.arcs) {
 			if (arc.length < 4) {
 				// do not simplify short arcs
 				simplifiedArcs.add(arc);
@@ -71,8 +72,8 @@ public class Mesh {
 					}
 				}
 
-				// do the stacking/popping of triangles to getFirst a sequence of
-				// triangles that the shortest path must visit on its way
+				// do the stacking/popping of triangles to getFirst a sequence
+				// of triangles that the shortest path must visit on its way
 				// from start to end
 
 				final Edge[] edgeStack = new Edge[arc.length + 1];

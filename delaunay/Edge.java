@@ -133,14 +133,8 @@ public class Edge {
 	 *            the new destination
 	 */
 	public void setCoordinates(final Point origin, final Point destination) {
-		if (o == null || dest() == null) {
-			setOrig(origin);
-			setDest(destination);
-		} else {
-			setOrig(origin);
-			setDest(destination);
-		}
-
+		setOrig(origin);
+		setDest(destination);
 	}
 
 	/**
