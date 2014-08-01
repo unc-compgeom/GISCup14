@@ -2,10 +2,10 @@ package delaunay;
 
 public class Point implements Comparable<Point> {
 
-	public final float x;
-	public final float y;
+	public final double x;
+	public final double y;
 
-	public Point(final float x, final float y) {
+	public Point(final double x, final double y) {
 		this.x = x;
 		this.y = y;
 	}
