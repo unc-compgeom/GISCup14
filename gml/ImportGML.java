@@ -1,7 +1,5 @@
 package gml;
 
-import delaunay.Point;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -10,6 +8,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+
+import delaunay.Point;
 
 public class ImportGML {
 
@@ -53,8 +53,8 @@ public class ImportGML {
 			final Point[] floatPoints = new Point[doublePoints.length / 2];
 			points.add(floatPoints);
 			for (int i = 0; i < floatPoints.length; i++) {
-				floatPoints[i] = new Point((float) (doublePoints[i * 2] - dX),
-						(float) (doublePoints[i * 2 + 1] - dY));
+				floatPoints[i] = new Point((doublePoints[i * 2] - dX),
+						(doublePoints[i * 2 + 1] - dY));
 
 			}
 		}
@@ -62,8 +62,8 @@ public class ImportGML {
 			final Point[] floatArc = new Point[doubleArc.length / 2];
 			arcs.add(floatArc);
 			for (int i = 0; i < floatArc.length; i++) {
-				floatArc[i] = new Point((float) (doubleArc[i * 2] - dX),
-						(float) (doubleArc[i * 2 + 1] - dY));
+				floatArc[i] = new Point((doubleArc[i * 2] - dX),
+						(doubleArc[i * 2 + 1] - dY));
 			}
 		}
 		return new ArcsPointsAndOffsets(arcs, points, dX, dY);
@@ -132,7 +132,7 @@ public class ImportGML {
 			}
 			// process readCoordinates
 			final double[] processedCoordinates = new double[stringCoordinates
-			                                                 .size()];
+					.size()];
 			final Iterator<String> it = stringCoordinates.iterator();
 			for (int i = 0; i < processedCoordinates.length; i++) {
 				processedCoordinates[i] = Double.parseDouble(it.next());

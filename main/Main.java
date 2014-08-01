@@ -1,22 +1,26 @@
 package main;
 
-import mesh.Mesh;
-
 import java.io.IOException;
+
+import mesh.Mesh;
 
 class Main {
 	public static void main(String[] args) {
 		if (args.length == 0) {
-			args = new String[] { "src\\td1", "src\\td2", "src\\td3" };
+			args = new String[] { "40000", "src\\td1\\lines_out.txt",
+					"src\\td1\\points_out.txt", "src\\td1\\simplified.txt" };
 		}
-		for (final String folderName : args) {
-			try {
-				Mesh.simplify(folderName);
-			} catch (final IOException e) {
-				System.err.print("IOException");
-				e.printStackTrace();
-				return;
-			}
+		int pointsToRemove = Integer.parseInt(args[0]);
+		String lines = args[1];
+		String points = args[2];
+		String outfile = args[3];
+		try {
+			Mesh.simplify(pointsToRemove, lines, points, outfile);
+		} catch (final IOException e) {
+			System.err.print("IOException");
+			e.printStackTrace();
+			return;
 		}
+
 	}
 }
