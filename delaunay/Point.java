@@ -10,7 +10,6 @@ public class Point implements Comparable<Point> {
 		this.y = y;
 	}
 
-	@Override
 	public int compareTo(final Point p) {
 		// lexicographical comparison
 		return x < p.x ? -1 : x > p.x ? 1 : y < p.y ? -1 : y > p.y ? 1 : 0;

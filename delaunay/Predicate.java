@@ -14,11 +14,11 @@ class Predicate {
 	 * @return true iff <tt>p</tt> is ahead of <tt>qr</tt>.
 	 */
 	private static boolean ahead(final Point p, final Point q, final Point r) {
-		final float pqx = p.x - q.x;
-		final float pqy = p.y - q.y;
-		final float rqx = r.x - q.x;
-		final float rqy = r.y - q.y;
-		final float dot = pqx * rqx + pqy * rqy;
+		final double pqx = p.x - q.x;
+		final double pqy = p.y - q.y;
+		final double rqx = r.x - q.x;
+		final double rqy = r.y - q.y;
+		final double dot = pqx * rqx + pqy * rqy;
 		return dot > distSquared(q, r);
 	}
 
@@ -55,10 +55,10 @@ class Predicate {
 	 */
 	public static boolean isPointInCircle(final Point test, final Point a,
 			final Point b, final Point c) {
-		final float ax = a.x, ay = a.y;
-		final float bx = b.x, by = b.y;
-		final float cx = c.x, cy = c.y;
-		final float dx = test.x, dy = test.y;
+		final double ax = a.x, ay = a.y;
+		final double bx = b.x, by = b.y;
+		final double cx = c.x, cy = c.y;
+		final double dx = test.x, dy = test.y;
 		final double det = (ax * ax + ay * ay) * triArea(b, c, test)
 				- (bx * bx + by * by) * triArea(a, c, test)
 				+ (cx * cx + cy * cy) * triArea(a, b, test)
@@ -76,11 +76,11 @@ class Predicate {
 		final Point a = e.orig();
 		final Point b = e.dest();
 		if (triArea(a, b, p) == 0) {
-			final float pax = p.x - a.x;
-			final float pay = p.y - a.y;
-			final float bax = b.x - a.x;
-			final float bay = b.y - a.y;
-			final float dot = pax * bax + pay * bay;
+			final double pax = p.x - a.x;
+			final double pay = p.y - a.y;
+			final double bax = b.x - a.x;
+			final double bay = b.y - a.y;
+			final double dot = pax * bax + pay * bay;
 			final double distSq = distSquared(a, b);
 			return 0 <= dot && dot <= distSq;
 		} else {
@@ -113,10 +113,10 @@ class Predicate {
 	 * @return twice the signed area
 	 */
 	private static double triArea(final Point a, final Point b, final Point c) {
-		final float bax = b.x - a.x;
-		final float cay = c.y - a.y;
-		final float bay = b.y - a.y;
-		final float cax = c.x - a.x;
+		final double bax = b.x - a.x;
+		final double cay = c.y - a.y;
+		final double bay = b.y - a.y;
+		final double cax = c.x - a.x;
 		return bax * cay - bay * cax; // det
 	}
 }
