@@ -1,9 +1,5 @@
 package mesh;
 
-import delaunay.DuplicatePointException;
-import delaunay.Edge;
-import delaunay.Point;
-import delaunay.Subdivision;
 import gml.ArcsPointsAndOffsets;
 import gml.ExportGML;
 import gml.ImportGML;
@@ -12,6 +8,11 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import delaunay.DuplicatePointException;
+import delaunay.Edge;
+import delaunay.Point;
+import delaunay.Subdivision;
 
 public class Mesh {
 	private static boolean edgeIsPartOfRing(final Edge test,
@@ -26,10 +27,11 @@ public class Mesh {
 		return false;
 	}
 
-	public static void simplify(final String folderName) throws IOException {
+	public static void simplify(int pointsToRemove, final String lines,
+			String points, String outfile) throws IOException {
 		// import points
-		final ArcsPointsAndOffsets imported = ImportGML.importGML(folderName
-				+ "\\points_out.txt", folderName + "\\lines_out.txt");
+		final ArcsPointsAndOffsets imported = ImportGML
+				.importGML(points, lines);
 
 		// do triangulation on arc endpoints and all constraint points.
 		final List<Point> triangulationPoints = new LinkedList<Point>();
@@ -46,12 +48,12 @@ public class Mesh {
 				triangulationPoints.add(arc[arc.length - 1]);
 			}
 		}
-		for (final Point[] points : imported.points) {
-			Collections.addAll(triangulationPoints, points);
+		for (final Point[] pts : imported.points) {
+			Collections.addAll(triangulationPoints, pts);
 		}
 		final Subdivision triangulation = delaunay.DelaunayTriangulation
 				.triangulate(triangulationPoints);
-		System.out.printf(folderName);
+		System.out.printf(lines);
 		System.out.printf("...done\n");
 
 		final List<Point[]> simplifiedArcs = new LinkedList<Point[]>();
@@ -71,7 +73,8 @@ public class Mesh {
 					}
 				}
 
-				// do the stacking/popping of triangles to getFirst a sequence of
+				// do the stacking/popping of triangles to getFirst a sequence
+				// of
 				// triangles that the shortest path must visit on its way
 				// from start to end
 
@@ -106,13 +109,13 @@ public class Mesh {
 				 * leaves the ring.
 				 */
 				int start = 1;
-				for (int j = 2; j < sp - 1; j++) {
-					if (edgeIsPartOfRing(edgeStack[j], edgeStack[0])) {
-						start = j;
-					} else {
-						break;
-					}
-				}
+				// for (int j = 2; j < sp - 1; j++) {
+				// if (edgeIsPartOfRing(edgeStack[j], edgeStack[0])) {
+				// start = j;
+				// } else {
+				// break;
+				// }
+				// }
 				// eliminate any looping around the end point
 				// leave the last point, remove at must up to index 1;
 				/**
@@ -121,13 +124,13 @@ public class Mesh {
 				 * path leaves the ring.
 				 */
 				int term = sp - 2;
-				for (int j = term - 1; j > 0; j--) {
-					if (edgeIsPartOfRing(edgeStack[j], edgeStack[sp - 1])) {
-						term = j;
-					} else {
-						break;
-					}
-				}
+				// for (int j = term - 1; j > 0; j--) {
+				// if (edgeIsPartOfRing(edgeStack[j], edgeStack[sp - 1])) {
+				// term = j;
+				// } else {
+				// break;
+				// }
+				// }
 				if (term < start) {
 					term = start;
 				}
@@ -148,7 +151,7 @@ public class Mesh {
 			}
 		}
 		ExportGML.exportGML(simplifiedArcs, imported.offsetLatitude,
-				imported.offsetLongitude, folderName);
+				imported.offsetLongitude, outfile);
 		// statistics
 		int originalSize = 0;
 		for (final Point[] arc : imported.arcs) {

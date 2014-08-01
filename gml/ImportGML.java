@@ -55,7 +55,6 @@ public class ImportGML {
 			for (int i = 0; i < floatPoints.length; i++) {
 				floatPoints[i] = new Point(doublePoints[i * 2] - dX,
 						doublePoints[i * 2 + 1] - dY);
-
 			}
 		}
 		for (final double[] doubleArc : doubleArcsCoordinates) {
